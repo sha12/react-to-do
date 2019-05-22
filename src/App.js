@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import Todos from './components/Todos'
+import Header from './components/layout/header'
+import AddToDo from './components/AddToDo'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component{
+  state = {
+    todos: [
+      {
+        id: 1,
+        title: "Wash clothes",
+        isdone: false
+      },
+      {
+        id: 2,
+        title: "Order dinner",
+        isdone: false
+      },
+      {
+        id: 3,
+        title: "Book tickets",
+        isdone: false
+      },
+    ]
+  }
+
+  markComplete = (id)=>{
+    this.setState({todos: this.state.todos.map(todo => {
+    if(todo.id === id){
+      todo.isdone = !todo.isdone
+    }
+    return todo  
+    })})
+  }
+
+  removeTask = (id)=>{
+    this.setState({todos: this.state.todos.filter(todo => {
+      if(todo.id != id){
+        return true;
+      }
+
+    })})
+  }
+
+  render(){
+    return(
+      <div className="App">
+        <Header/>
+        <Todos todos={this.state.todos} markComplete={this.markComplete} removeTask={this.removeTask}/>
+        <AddToDo/>
+      </div>
+    )
+  }
 }
 
 export default App;
