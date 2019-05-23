@@ -1,29 +1,23 @@
 import React, {Component} from 'react';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css';
 import Todos from './components/Todos'
 import Header from './components/layout/header'
 import AddToDo from './components/AddToDo'
+import About from './components/pages/about'
+import uuid from 'uuid'
+import axios from 'axios';
 
 
 class App extends Component{
   state = {
     todos: [
-      {
-        id: 1,
-        title: "Wash clothes",
-        isdone: false
-      },
-      {
-        id: 2,
-        title: "Order dinner",
-        isdone: false
-      },
-      {
-        id: 3,
-        title: "Book tickets",
-        isdone: false
-      },
     ]
+  }
+
+  componentDidMount(){
+    axios.get("https://jsonplaceholder.typicode.com/todos/?_limit=40")
+    .then(res => this.setState({todos: res.data}))
   }
 
   markComplete = (id)=>{
@@ -37,20 +31,38 @@ class App extends Component{
 
   removeTask = (id)=>{
     this.setState({todos: this.state.todos.filter(todo => {
-      if(todo.id != id){
+      if(todo.id !== id){
         return true;
       }
-
     })})
+  }
+
+  addToDo = (title) => {
+    const newToDO = {
+      id: uuid.v4(),
+      title,
+      isdone:false
+    }
+    this.setState({todos : [...this.state.todos, newToDO ]})
   }
 
   render(){
     return(
+      <Router>
       <div className="App">
         <Header/>
-        <Todos todos={this.state.todos} markComplete={this.markComplete} removeTask={this.removeTask}/>
-        <AddToDo/>
+        <Route exact path="/" render={props => (
+          <React.Fragment>
+          <AddToDo addTask={this.addToDo} />
+          <Todos todos={this.state.todos} markComplete={this.markComplete} removeTask={this.removeTask} />
+          </React.Fragment>
+          )}>
+        </Route>
+        <Route path="/about" component={About}>
+
+        </Route>
       </div>
+      </Router>
     )
   }
 }
